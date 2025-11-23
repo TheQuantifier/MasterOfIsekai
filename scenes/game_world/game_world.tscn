@@ -66,4 +66,4 @@ prior_mag = 2486.5166
 next_mag = 2486.5166
 next_pt_init = NodePath("../RP_001")
 
-[node name="MainTerrain2" parent="." instance=ExtResource("13_q8eqm")]
+[node name="MainTerrain" parent="." instance=ExtResource("13_q8eqm")]
