@@ -12,7 +12,7 @@ class_name CameraRig
 @export var view_enabled: bool = true   # toggle for all look input
 
 # Local offsets (PivotPitch space)
-@export var third_person_offset := Vector3(0.0, 1.6, 0.0)
+@export var third_person_offset := Vector3(0.0, 4, 0.0)
 @export var first_person_offset := Vector3(0.0, 1.65, 0.0)
 @export var third_person_distance := 4.0
 @export var lerp_speed := 14.0

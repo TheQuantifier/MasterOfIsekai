@@ -1,11 +1,12 @@
 extends CharacterBody3D
+class_name Player
 
 @export var settings: PlayerSettings   # link your .tres in the inspector
 
 @onready var character_node: Node3D = $Character
 @onready var camera_rig: CameraRig = $CameraRig
 
-# Imported character model -> visibility layer (so CameraRig can hide in 1P)
+# Imported character model -> visibility layer
 @export var character_visibility_layer_index: int = 1
 
 # -------------------------------------------------------------------
@@ -15,7 +16,7 @@ var anim_player: AnimationPlayer
 var is_jumping: bool = false
 
 # -------------------------------------------------------------------
-# Water state
+# Water state (integrated with Waterways)
 # -------------------------------------------------------------------
 var in_water: bool = false
 var _was_in_water_last_frame: bool = false
@@ -50,12 +51,21 @@ var st_swimming  # PlayerState
 func change_state(next_state) -> void:
 	if state == next_state or next_state == null:
 		return
-	var prev : PlayerState = state
+	var prev: PlayerState = state
 	if prev and prev.has_method("exit"):
 		prev.exit(next_state)
 	state = next_state
 	if state and state.has_method("enter"):
 		state.enter(prev)
+
+# -------------------------------------------------------------------
+# Waterways integration
+# -------------------------------------------------------------------
+@export var use_waterways: bool = true
+@export var water_detect_margin: float = 1.0
+@export var water_flow_force: float = 2.0
+
+var current_water_flow: Vector3 = Vector3.ZERO
 
 # -------------------------------------------------------------------
 # Lifecycle
@@ -111,7 +121,6 @@ func load_model_from_character_data() -> void:
 		var model_instance: Node3D = model_scene.instantiate()
 		character_node.add_child(model_instance)
 
-		# Put the model on a dedicated Visibility Layer so the camera can hide it in 1P
 		var layer_idx := character_visibility_layer_index
 		if is_instance_valid(camera_rig) and camera_rig.head_visibility_layer >= 0:
 			layer_idx = camera_rig.head_visibility_layer
@@ -132,13 +141,68 @@ func _set_visibility_layer_recursive(node: Node, layer_index: int) -> void:
 		_set_visibility_layer_recursive(c, layer_index)
 
 # -------------------------------------------------------------------
+# Waterways helpers
+# -------------------------------------------------------------------
+func _get_nearest_river_sample() -> Dictionary:
+	var pos: Vector3 = global_transform.origin
+	var best_height := -INF
+	var best_flow := Vector3.ZERO
+	var found := false
+
+	for node in get_tree().get_nodes_in_group("river_float"):
+		if node == null:
+			continue
+		var h: float = node.GetWaterHeight(pos)
+		var default_h: float = node.DefaultHeight
+
+		if abs(h - default_h) < 0.01:
+			continue  # no hit
+
+		if not found or h > best_height:
+			found = true
+			best_height = h
+			best_flow = node.GetWaterFlowDirection(pos)
+
+	return {
+		"found": found,
+		"height": best_height,
+		"flow": best_flow,
+	}
+
+func _update_water_state_from_waterways() -> void:
+	if not use_waterways:
+		return
+
+	var sample := _get_nearest_river_sample()
+	_was_in_water_last_frame = in_water
+
+	if sample.found:
+		# Debug the raw river height & flow
+		print("[RIVER] Surface height: ", sample.height, " Flow: ", sample.flow)
+		var water_height: float = sample.height
+		current_water_flow = sample.flow
+
+		settings.water_surface_height = water_height
+
+		var threshold := settings.surface_offset + water_detect_margin
+		var inside := global_position.y <= water_height + threshold
+
+		if inside != in_water:
+			set_in_water(inside)
+	else:
+		current_water_flow = Vector3.ZERO
+		if in_water:
+			set_in_water(false)
+
+# -------------------------------------------------------------------
 # Physics
 # -------------------------------------------------------------------
 func _physics_process(delta: float) -> void:
+	_update_water_state_from_waterways()
 	if state:
 		state.physics_update(delta)
 
-# These helpers remain for states to reuse
+# Helpers
 func compute_local_axes() -> Dictionary:
 	var fwd := transform.basis.z;  fwd.y = 0.0;  fwd = fwd.normalized()
 	var right := transform.basis.x; right.y = 0.0; right = right.normalized()
@@ -194,7 +258,7 @@ func _handle_water_vertical(delta: float, jump_held: bool) -> void:
 		velocity.y = max(velocity.y - settings.water_sink_accel * delta, -settings.max_sink_speed)
 
 # -------------------------------------------------------------------
-# Animations (reused by states)
+# Animations
 # -------------------------------------------------------------------
 func _handle_animations(is_moving_forward: bool, is_moving_backward: bool, is_crouching: bool, is_sprinting: bool, now_on_floor: bool) -> void:
 	if anim_player == null:
@@ -236,10 +300,15 @@ func _handle_animations(is_moving_forward: bool, is_moving_backward: bool, is_cr
 # -------------------------------------------------------------------
 func set_in_water(value: bool) -> void:
 	if value and not in_water:
+		print("[WATER] Entering water at height: ", settings.water_surface_height)
+	elif not value and in_water:
+		print("[WATER] Exiting water")
+		
+	if value and not in_water:
 		_bob_t = 0.0
+
 	in_water = value
 
-	# Transition immediately when water state toggles
 	if in_water:
 		change_state(st_swimming)
 	else:

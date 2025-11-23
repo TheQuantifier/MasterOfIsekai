@@ -37,6 +37,7 @@ enabled=PackedStringArray("res://addons/multimesh_scatter/plugin.cfg", "res://ad
 [global_group]
 
 player=""
+river_float=""
 
 [input]
 
