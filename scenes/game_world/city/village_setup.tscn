@@ -1,6 +1,5 @@
-[gd_scene load_steps=22 format=4 uid="uid://cqn3bmrakwgxf"]
+[gd_scene load_steps=21 format=4 uid="uid://cqn3bmrakwgxf"]
 
-[ext_resource type="PackedScene" uid="uid://b8uwwx626ecop" path="res://scenes/game_world/city/main_roads_new.tscn" id="1_npvmk"]
 [ext_resource type="PackedScene" uid="uid://bi2ul83n8cyl4" path="res://assets/models/Simple Medieval Pack/House_2.fbx" id="2_d45g5"]
 [ext_resource type="PackedScene" uid="uid://bt37syg8qfv44" path="res://assets/models/Simple Medieval Pack/House_3.fbx" id="3_0wo56"]
 [ext_resource type="PackedScene" uid="uid://bmc66ue15sh3q" path="res://assets/models/Simple Medieval Pack/House_4.fbx" id="4_uc5qx"]
@@ -296,9 +295,6 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_eyd85")
 
 [node name="Village Setup" type="Node3D"]
-
-[node name="MainRoadsNew" parent="." instance=ExtResource("1_npvmk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 
 [node name="House_1" type="Node3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -11, 0, 33)

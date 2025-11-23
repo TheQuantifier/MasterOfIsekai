@@ -6,10 +6,10 @@
 
 [resource]
 script = ExtResource("3_1vnc0")
-char_id = "MaxAZillion"
+char_id = "TheQuantifier"
 username = "john"
 model_path = "res://assets/character_models/scenes/male/y_bot.tscn"
-last_position = Vector3(-50.113403, 18.25943, -1048.3531)
+last_position = Vector3(0, 1, 0)
 password = "john"
 strength_stats = {
 0: 1,
@@ -17,13 +17,13 @@ strength_stats = {
 2: 1
 }
 defense_stats = {
-0: 10,
-1: 10,
-2: 10,
-3: 10,
-4: 10
+0: 1,
+1: 1,
+2: 1,
+3: 1,
+4: 1
 }
 resistance_stats = {
-0: 15,
-1: 20
+0: 0,
+1: 0
 }

@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="IsekaiDungeons"
+config/name="MasterOfIsekai"
 config/description="My main game project currently titled Dungeon101."
 run/main_scene="uid://dm08ug13g54tn"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
@@ -32,7 +32,7 @@ project/assembly_name="ProjectDungeon101"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/multimesh_scatter/plugin.cfg", "res://addons/terrain_3d/plugin.cfg", "res://addons/waterways_net/plugin.cfg")
+enabled=PackedStringArray("res://addons/multimesh_scatter/plugin.cfg", "res://addons/road-generator/plugin.cfg", "res://addons/terrain_3d/plugin.cfg", "res://addons/waterways_net/plugin.cfg")
 
 [global_group]
 

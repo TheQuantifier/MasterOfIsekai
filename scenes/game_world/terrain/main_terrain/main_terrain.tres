@@ -1,0 +1,32 @@
+[gd_resource type="Terrain3DAssets" load_steps=6 format=3 uid="uid://b7m51hgkrv77s"]
+
+[ext_resource type="Texture2D" uid="uid://dqu2ljthkg7b0" path="res://assets/textures/brown_mud_leaves/brown_mud_leaves_01_diff_4k.png" id="1_ti266"]
+[ext_resource type="Texture2D" uid="uid://cporfhtyxbxxq" path="res://assets/textures/brown_mud_leaves/brown_mud_leaves_01_nor_gl_4k.png" id="2_onksw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fi0vx"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_bl008"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_fi0vx")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_p1kt6"]
+name = "brown_mud_leaves_01_diff_4k"
+albedo_texture = ExtResource("1_ti266")
+normal_texture = ExtResource("2_onksw")
+uv_scale = 0.412
+
+[resource]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_bl008")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_p1kt6")])
